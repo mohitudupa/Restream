@@ -79,7 +79,7 @@ class Lex:
         :param token_list: List of tokens {list of lists(name, regex)}
         :param ignore_list: List of tokens to ignore string(name)
         """
-        self.token_list = [(token_name, re.compile('^{}'.format(token_rule))) for token_name, token_rule in token_list]
+        self.token_list = [(token_name, re.compile(token_rule)) for token_name, token_rule in token_list]
         self.ignore_list = ignore_list
 
     def tokenize(self, text: str) -> TokenStream:
