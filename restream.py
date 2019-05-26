@@ -181,21 +181,24 @@ class Yacc:
 
         head = tokens.head
         for production in productions:
-            print('production: {}'.format(production))
+            print('============================================================')
+            print('production: {}'.format(production[:-1]))
             args = []
             rhs = production[:-1]
             func = production[-1]
 
             for symbol in rhs:
-                print('Symbol: {}'.format(symbol))
+                print('------------------------------------------------------------')
+                print('Symbol: {} - Token: {}'.format(symbol, tokens.peak()[0]))
                 res = None
                 if symbol not in self.grammar and symbol == tokens.peak()[0]:
+                    print('Matched symbol: {}'.format(res))
                     res = tokens.get()[1]
                 elif symbol in self.grammar:
-                    res = self.parse(tokens, symbol)
+                    print('Matched production: {}'.format(symbol))
+                    res = self.parse_verbose(tokens, symbol)
 
                 if res:
-                    print('Matched: {}'.format(res))
                     args.append(res)
                 else:
                     tokens.seek(head)
