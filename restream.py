@@ -7,7 +7,7 @@ grammar rules
 import re
 
 
-version = '0.0.3'
+version = '0.0.5'
 
 
 class TokenStream:
@@ -73,13 +73,17 @@ class Lex:
     """
     This is the lex class, this provides lexical scanning functions
     """
-    def __init__(self, token_list: list, ignore_list: list):
+    def __init__(self, token_list: list, ignore_list: list, ignore_case: bool):
         """
         Init
         :param token_list: List of tokens {list of lists(name, regex)}
         :param ignore_list: List of tokens to ignore string(name)
+        :param ignore_case: True for ignore case else False
         """
-        self.token_list = [(token_name, re.compile(token_rule)) for token_name, token_rule in token_list]
+        if ignore_case:
+            self.token_list = [(token_name, re.compile(token_rule, re.IGNORECASE)) for token_name, token_rule in token_list]
+        else:
+            self.token_list = [(token_name, re.compile(token_rule)) for token_name, token_rule in token_list]
         self.ignore_list = ignore_list
 
     def tokenize(self, text: str) -> TokenStream:
