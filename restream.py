@@ -7,7 +7,19 @@ grammar rules
 import re
 
 
-version = '0.0.5'
+__version__ = '0.0.7'
+
+
+class NoMatch:
+    """
+    No match class
+    """
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def __bool__():
+        return False
 
 
 class TokenStream:
@@ -158,20 +170,20 @@ class Yacc:
             func = production[-1]
 
             for symbol in rhs:
-                res = None
+                res = NoMatch()
                 if symbol not in self.grammar and symbol == tokens.peak()[0]:
                     res = tokens.get()[1]
                 elif symbol in self.grammar:
                     res = self.parse(tokens, symbol)
 
-                if res:
+                if not isinstance(res, NoMatch):
                     args.append(res)
                 else:
                     tokens.seek(head)
                     break
             else:
                 return func(*args)
-        return False
+        return NoMatch()
 
     def parse_verbose(self, tokens: TokenStream, lhs: str = 'start') -> object:
         """
@@ -185,28 +197,31 @@ class Yacc:
 
         head = tokens.head
         for production in productions:
-            print('============================================================')
-            print('production: {}'.format(production[:-1]))
+            print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            print(f'production: {lhs} -> {" ".join(production[:-1])}')
             args = []
             rhs = production[:-1]
             func = production[-1]
 
             for symbol in rhs:
                 print('------------------------------------------------------------')
-                print('Symbol: {} - Token: {}'.format(symbol, tokens.peak()[0]))
-                res = None
+                print(f'Symbol: {symbol} - Token: {tokens.peak()[0]}')
+                res = NoMatch()
                 if symbol not in self.grammar and symbol == tokens.peak()[0]:
-                    print('Matched symbol: {}'.format(res))
                     res = tokens.get()[1]
+                    print(f'Matched constant: {res}')
                 elif symbol in self.grammar:
-                    print('Matched production: {}'.format(symbol))
+                    print(f'Matched production: {symbol}')
                     res = self.parse_verbose(tokens, symbol)
 
-                if res:
+                if not isinstance(res, NoMatch):
                     args.append(res)
                 else:
                     tokens.seek(head)
                     break
+                print('------------------------------------------------------------')
             else:
+                print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                 return func(*args)
-        return False
+            print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        return NoMatch()
